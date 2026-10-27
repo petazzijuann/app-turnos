@@ -1,0 +1,23 @@
+# Cloudflare Pages · app-turnos
+#
+# Local:  npm run build && npx wrangler pages dev dist
+#         (los secretos los lee de .dev.vars, que NO se sube a git)
+#
+# En producción las variables se cargan en el panel de Pages
+# (Settings -> Variables and Secrets). Ver README.
+name = "app-turnos"
+pages_build_output_dir = "dist"
+compatibility_date = "2025-10-01"
+
+[vars]
+APP_ORIGIN = "https://turnos.futurislabs.net"
+MAIL_FROM = "Futurislabs <hola@futurislabs.net>"
+
+# Rate limit de las rutas públicas.
+# Si no existe el binding, las Functions usan un contador en memoria por
+# isolate (suficiente para empezar). Para activarlo de verdad:
+#   npx wrangler kv namespace create TURNOS_RATE
+# y pega el id acá + en el panel de Pages (Settings -> Bindings -> KV).
+# [[kv_namespaces]]
+# binding = "RATE"
+# id = "pega-el-id-aca"

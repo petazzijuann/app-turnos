@@ -1,0 +1,116 @@
+/*
+  TOKENS DE MARCA — Futurislabs
+  --------------------------------------------------------------
+  Este es el ÚNICO archivo que hay que tocar para re-marcar la app.
+  Los valores están copiados de futurislabs.net (src/styles/global.css del
+  sitio) y traducidos a los nombres de tokens de esta plantilla.
+
+  Paleta del logo: navy + azul de marca como acento + menta como señal.
+  Tipografías: Space Grotesk (títulos) + Inter (texto), servidas desde la
+  propia app (@fontsource) para que funcionen sin internet.
+*/
+
+:root {
+  /* Superficies */
+  --fl-bg: #f6f8fb; /* fondo de la página */
+  --fl-surface: #ffffff; /* tarjetas y bloques */
+  --fl-surface-2: #eef2f8; /* bloques secundarios */
+  --fl-border: #dde4ee; /* bordes suaves */
+  --fl-border-strong: #7d8798; /* bordes de controles (contraste 3:1) */
+
+  /* Texto */
+  --fl-ink: #0b1736; /* navy del logo */
+  --fl-muted: #4a5a72;
+
+  /* Marca */
+  --fl-brand: #0b5ed7; /* azul de marca */
+  --fl-brand-strong: #0a4cb0;
+  --fl-brand-soft: #e3edfd;
+  --fl-on-brand: #ffffff;
+
+  /* Señal (menta del logo): destacados, nunca texto chico */
+  --fl-signal: #10e0b8;
+  --fl-on-signal: #0b1736;
+
+  /* Degradado de marca (mismo recorrido que el isotipo) */
+  --fl-brand-gradient: linear-gradient(100deg, #0a4cb0 0%, #0b5ed7 38%, #00a8f0 70%, #10e0b8 100%);
+
+  /* Semánticos */
+  --fl-ok: #04735d;
+  --fl-ok-soft: #d9f7ef;
+  --fl-warn: #8a5a00;
+  --fl-warn-soft: #fdf0d5;
+  --fl-danger: #c01d3c;
+  --fl-danger-soft: #fde7ec;
+
+  /* Tipografías: cambia acá si cargas fuentes propias (ver src/index.css) */
+  --fl-font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --fl-font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --fl-font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  /* Forma */
+  --fl-radius: 1.25rem;
+  --fl-radius-sm: 0.875rem;
+  --fl-shadow: 0 1px 2px rgb(11 23 54 / 0.05), 0 1px 3px rgb(11 23 54 / 0.07);
+  --fl-shadow-lift: 0 10px 20px -8px rgb(11 23 54 / 0.18), 0 2px 6px rgb(11 23 54 / 0.09);
+}
+
+.dark {
+  --fl-bg: #080c14;
+  --fl-surface: #111726;
+  --fl-surface-2: #182032;
+  --fl-border: #232c42;
+  --fl-border-strong: #6e7c95;
+
+  --fl-ink: #eef3fa;
+  --fl-muted: #9aa7bd;
+
+  --fl-brand: #4ea8ff;
+  --fl-brand-strong: #7cc0ff;
+  --fl-brand-soft: #11223f;
+  --fl-on-brand: #04142e;
+
+  --fl-signal: #25f0c0;
+  --fl-on-signal: #0b1736;
+
+  --fl-ok: #25f0c0;
+  --fl-ok-soft: #0c2b26;
+  --fl-warn: #e4b35c;
+  --fl-warn-soft: #2a2110;
+  --fl-danger: #ff7d95;
+  --fl-danger-soft: #2d1319;
+
+  --fl-shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+  --fl-shadow-lift: 0 12px 24px -10px rgb(0 0 0 / 0.7), 0 2px 6px rgb(0 0 0 / 0.4);
+}
+
+/* Puente tokens -> utilidades de Tailwind (bg-surface, text-muted, etc.) */
+@theme inline {
+  --color-bg: var(--fl-bg);
+  --color-surface: var(--fl-surface);
+  --color-surface-2: var(--fl-surface-2);
+  --color-line: var(--fl-border);
+  --color-line-strong: var(--fl-border-strong);
+  --color-ink: var(--fl-ink);
+  --color-muted: var(--fl-muted);
+  --color-brand: var(--fl-brand);
+  --color-brand-strong: var(--fl-brand-strong);
+  --color-brand-soft: var(--fl-brand-soft);
+  --color-on-brand: var(--fl-on-brand);
+  --color-signal: var(--fl-signal);
+  --color-on-signal: var(--fl-on-signal);
+  --color-ok: var(--fl-ok);
+  --color-ok-soft: var(--fl-ok-soft);
+  --color-warn: var(--fl-warn);
+  --color-warn-soft: var(--fl-warn-soft);
+  --color-danger: var(--fl-danger);
+  --color-danger-soft: var(--fl-danger-soft);
+
+  --font-sans: var(--fl-font-sans);
+  --font-display: var(--fl-font-display);
+  --font-mono: var(--fl-font-mono);
+
+  --radius-card: var(--fl-radius);
+  --shadow-card: var(--fl-shadow);
+  --shadow-lift: var(--fl-shadow-lift);
+}

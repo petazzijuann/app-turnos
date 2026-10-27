@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es" class="">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#080c14" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Turnos" />
+    <title>Turnos · Futurislabs</title>
+    <meta
+      name="description"
+      content="Turnero online para peluquerías, barberías, centros de estética y consultorios. Tus clientes reservan solos y tú recordás los turnos por WhatsApp en un toque."
+    />
+    <script>
+      // Evita el parpadeo de tema: se aplica antes de pintar.
+      try {
+        var t = localStorage.getItem('fl.turnos.theme')
+        var dark = t === 'dark' || (!t && matchMedia('(prefers-color-scheme: dark)').matches)
+        document.documentElement.classList.toggle('dark', dark)
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

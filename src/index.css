@@ -1,0 +1,119 @@
+/* Tipografías de la marca, servidas desde la app (funcionan sin internet). */
+@import '@fontsource/inter/latin-400.css';
+@import '@fontsource/inter/latin-500.css';
+@import '@fontsource/inter/latin-600.css';
+@import '@fontsource/space-grotesk/latin-500.css';
+@import '@fontsource/space-grotesk/latin-600.css';
+@import '@fontsource/space-grotesk/latin-700.css';
+@import 'tailwindcss';
+@import './styles/tokens.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background-color: var(--fl-bg);
+    color: var(--fl-ink);
+    font-family: var(--fl-font-sans);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* Foco visible y accesible en toda la app */
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--fl-brand);
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+  /* Evita el zoom automático de iOS en inputs */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--fl-font-display);
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  ::selection {
+    background: var(--fl-brand);
+    color: var(--fl-on-brand);
+  }
+}
+
+@layer components {
+  .fl-card {
+    background-color: var(--fl-surface);
+    border: 1px solid var(--fl-border);
+    border-radius: var(--fl-radius);
+    box-shadow: var(--fl-shadow);
+  }
+  .fl-input {
+    width: 100%;
+    background-color: var(--fl-surface);
+    color: var(--fl-ink);
+    border: 1px solid var(--fl-border-strong);
+    border-radius: 0.625rem;
+    padding: 0.55rem 0.7rem;
+    line-height: 1.3;
+  }
+  .fl-input::placeholder {
+    color: var(--fl-muted);
+    opacity: 0.8;
+  }
+  .fl-label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--fl-muted);
+    margin-bottom: 0.3rem;
+  }
+}
+
+/* --------------------------- Impresión / PDF --------------------------- */
+@media print {
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .fl-card {
+    box-shadow: none !important;
+    border-color: #ccc !important;
+    break-inside: avoid;
+  }
+  a[href]:after {
+    content: '';
+  }
+}
+.print-only {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
