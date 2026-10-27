@@ -8,6 +8,12 @@ export type Env = {
   TURNSTILE_SECRET?: string
   /** Secreto de firma del webhook de Lemon Squeezy. */
   LEMON_WEBHOOK_SECRET?: string
+  /**
+   * OPCIONAL. API key de Lemon Squeezy. Si está, los eventos de pago
+   * refrescan la suscripción desde la API en lugar de ignorarse.
+   * Sin esto el estado igual llega por `subscription_updated`.
+   */
+  LEMON_API_KEY?: string
   /** API key de Resend (mails de confirmación al cliente). */
   RESEND_API_KEY?: string
   /** Remitente de los mails. */

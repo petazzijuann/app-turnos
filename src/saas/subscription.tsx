@@ -97,6 +97,25 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
   }, [user, refresh])
 
   /**
+   * El estado del plan vive solo en memoria (nunca en localStorage): si se
+   * cacheara, un cambio hecho en Lemon tardaría en verse. Igual se vuelve a
+   * pedir al volver a la pestaña, así una suscripción recién activada aparece
+   * sin tener que recargar la página.
+   */
+  useEffect(() => {
+    if (!user) return
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') void refresh()
+    }
+    document.addEventListener('visibilitychange', onVisible)
+    window.addEventListener('focus', onVisible)
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible)
+      window.removeEventListener('focus', onVisible)
+    }
+  }, [user, refresh])
+
+  /**
    * Al volver del checkout, el webhook puede tardar unos segundos. Sondeamos
    * cada 2 s hasta que aparezca la fila (o hasta el timeout).
    */
@@ -105,7 +124,8 @@ export function SubscriptionProvider({ children }: { children: ReactNode }) {
       const until = Date.now() + timeoutMs
       while (Date.now() < until && alive.current) {
         const r = await refresh()
-        if (r && accessFor(r).level !== 'none') return true
+        // Cualquier fila con estado real sirve: el webhook ya pasó.
+        if (r && r.status && r.status !== 'none') return true
         await new Promise((res) => setTimeout(res, 2000))
       }
       return false

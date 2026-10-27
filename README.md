@@ -49,7 +49,7 @@ npm install
 npm run dev          # front en Vite (sin Functions)
 npm run build        # tsc -b + vite build -> dist/
 npm run pages:dev    # build + wrangler pages dev dist (Functions + .dev.vars)
-npm test             # Vitest (50 tests de la lógica pura)
+npm test             # Vitest (67 tests de la lógica pura)
 ```
 
 ---
@@ -68,7 +68,8 @@ volver a correrlos sin romper nada.
 | 2 | `supabase/migrations/002_turnos_schema.sql` | tablas `turnos_*` + índices + restricción `EXCLUDE` que impide turnos superpuestos |
 | 3 | `supabase/migrations/003_turnos_rls.sql` | RLS de todas las `turnos_*` + alta en la publicación de Realtime |
 | 4 | `supabase/migrations/004_storage.sql` | bucket público `turnos-public` (2 MB, solo imágenes) + políticas por carpeta |
-| 5 | `supabase/seed_demo.sql` | **opcional**: "Barbería Demo" (`/r/demo`). Cambiá `v_email` por el tuyo y corrélo *después* de haberte registrado en la app |
+| 5 | `supabase/migrations/005_subscriptions_order.sql` | columna `lemon_updated_at` (descarta webhooks viejos), repaso de la RLS de `subscriptions` y reparación de las filas que quedaron con el estado de una factura |
+| 6 | `supabase/seed_demo.sql` | **opcional**: "Barbería Demo" (`/r/demo`). Cambiá `v_email` por el tuyo y corrélo *después* de haberte registrado en la app |
 
 Las tablas comunes (`profiles`, `subscriptions`) no llevan prefijo porque las
 van a compartir todas las apps de suscripción; las de esta app llevan `turnos_`.
@@ -113,6 +114,7 @@ segunda **van como Secret**.
 | `TURNSTILE_SECRET` | secreto de Turnstile |
 | `LEMON_WEBHOOK_SECRET` | secreto de firma del webhook |
 | `RESEND_API_KEY` | API key de Resend (mail de confirmación al cliente) |
+| `LEMON_API_KEY` | **opcional**. Si está, los eventos de pago refrescan la suscripción contra la API de Lemon en lugar de ignorarse |
 
 **Ya están en `wrangler.toml` (no hace falta cargarlas a mano):**
 `APP_ORIGIN` y `MAIL_FROM` (`Futurislabs <hola@futurislabs.net>`).
@@ -153,6 +155,19 @@ captcha (cómodo en local, peligroso en producción): cargalo siempre en Pages.
 4. En **Settings → General** dejá habilitado el *customer portal*: la pantalla
    "Mi plan" lleva ahí para cambiar la tarjeta o cancelar.
 
+**Qué eventos cambian el estado.** Solo los que traen `data.type === "subscriptions"`.
+Los de pago (`subscription_payment_success` / `_failed`) traen
+`data.type === "subscription-invoices"`: ahí `attributes.status` es el de la
+**factura** (`paid`, `failed`, `refunded`) y `data.id` es el id de la factura,
+no el de la suscripción. Guardar eso en `subscriptions.status` deja al usuario
+viendo "Reactiva tu plan" con la suscripción perfectamente activa. El webhook
+los descarta (o, con `LEMON_API_KEY`, refresca la suscripción de verdad); el
+estado real siempre llega por `subscription_updated`.
+
+**Eventos desordenados.** Cada evento trae `attributes.updated_at`. El webhook
+lo guarda en `subscriptions.lemon_updated_at` y descarta cualquier evento que
+sea más viejo que lo guardado, así un reintento tardío no pisa el estado nuevo.
+
 Cómo se traduce el estado a permisos (`src/shared/access.ts`, con tests):
 
 | Estado de Lemon | Acceso a la app | Página `/r/:slug` |
@@ -162,6 +177,11 @@ Cómo se traduce el estado a permisos (`src/shared/access.ts`, con tests):
 | `cancelled` | completo hasta `ends_at` | hasta `ends_at` |
 | `expired`, `unpaid`, `paused` | solo lectura + "Reactiva tu plan" | pausada |
 | sin suscripción | pantalla de prueba gratis | pausada |
+| desconocido, con `trial_ends_at` o `renews_at` en el futuro | completo (y queda un `console.warn`) | toma reservas |
+| desconocido, sin fechas vigentes | solo lectura | pausada |
+
+La penúltima fila es a propósito: ante un estado que no conocemos, las fechas
+mandan. Nadie que esté pagando se queda afuera por un estado inesperado.
 
 ### 2.7 Rate limit (KV) — opcional
 

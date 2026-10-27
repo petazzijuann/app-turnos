@@ -125,10 +125,36 @@ export function accessFor(sub: SubscriptionRow, now: Date | number = Date.now())
             : 'Tu plan no está activo. Reactivalo para volver a tomar reservas online.',
       }
 
-    default:
-      // Estado desconocido de Lemon: no bloqueamos de golpe, dejamos leer.
+    default: {
+      // Estado que no conocemos (Lemon agregó uno, o una versión vieja del
+      // webhook guardó el estado de una factura). Antes de bloquear a alguien
+      // que está pagando, miramos las fechas: si la prueba o la renovación
+      // todavía están en el futuro, el plan está vigente.
+      const vigenteHasta = [sub.trial_ends_at, sub.renews_at, sub.ends_at]
+        .map((v) => at(v))
+        .filter((t): t is number => t != null && !Number.isNaN(t))
+      const vigente = vigenteHasta.some((t) => t > ms)
+
+      onUnknownStatus(status, vigente)
+
+      if (vigente) return { ...base, level: 'full', accepting: true }
       return { ...base, level: 'readonly', notice: 'No pudimos confirmar el estado de tu plan.' }
+    }
   }
+}
+
+/**
+ * Se llama cuando aparece un estado que no conocemos. Queda registrado para
+ * poder detectarlo (es casi siempre un webhook mal interpretado), pero nunca
+ * decide por sí mismo si alguien entra o no.
+ */
+function onUnknownStatus(status: string, vigente: boolean) {
+  const msg =
+    `[turnos] Estado de suscripción desconocido: "${status}". ` +
+    (vigente
+      ? 'Las fechas dicen que el plan está vigente, así que se da acceso completo.'
+      : 'Sin fechas vigentes: queda en solo lectura.')
+  if (typeof console !== 'undefined') console.warn(msg)
 }
 
 /** Atajo para las Functions: ¿esta suscripción habilita reservas online? */
