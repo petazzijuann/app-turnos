@@ -13,11 +13,8 @@ compatibility_date = "2025-10-01"
 APP_ORIGIN = "https://turnos.futurislabs.net"
 MAIL_FROM = "Futurislabs <hola@futurislabs.net>"
 
-# Rate limit de las rutas públicas.
-# Si no existe el binding, las Functions usan un contador en memoria por
-# isolate (suficiente para empezar). Para activarlo de verdad:
-#   npx wrangler kv namespace create TURNOS_RATE
-# y pega el id acá + en el panel de Pages (Settings -> Bindings -> KV).
-# [[kv_namespaces]]
-# binding = "RATE"
-# id = "pega-el-id-aca"
+# Rate limit de las rutas públicas (KV "TURNOS_RATE").
+# Sin este binding, las Functions caen a un contador en memoria por isolate.
+[[kv_namespaces]]
+binding = "RATE"
+id = "484a25a2b4804a9ba6cb2d4066f9d770"
